@@ -13,7 +13,7 @@
 @end
 
 @implementation MGAViewController
-
+@synthesize userName;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -28,7 +28,20 @@
 }
 
 - (IBAction)changeGreeting:(id)sender {
-    [self.label setText: self.textField.text];
-    
+    self.userName = self.textField.text;
+    NSString *nameString = self.userName;
+    if ([nameString length] == 0) {
+        nameString = @"World";
+    }
+    NSString *greeting = [[NSString alloc] initWithFormat:@"Hello, %@!", nameString];
+    self.label.text = greeting;    
 }
+
+- (BOOL)textFieldShouldReturn:(UITextField *)theTextField {
+    if (theTextField == self.textField) {
+        [theTextField resignFirstResponder];
+    }
+    return YES;
+}
+
 @end
