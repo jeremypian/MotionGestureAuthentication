@@ -23,7 +23,12 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+    [self setTextField:nil];
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)changeGreeting:(id)sender {
+    [self.label setText: self.textField.text];
+    
+}
 @end

@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface MGAViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet UILabel *label;
+- (IBAction)changeGreeting:(id)sender;
 
 @end
