@@ -18,6 +18,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    [self.statusLight setBackgroundColor:[UIColor redColor]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -34,7 +35,14 @@
         nameString = @"World";
     }
     NSString *greeting = [[NSString alloc] initWithFormat:@"Hello, %@!", nameString];
-    self.label.text = greeting;    
+    self.label.text = greeting;
+    if(self.statusLight.backgroundColor == [UIColor redColor]){
+        [self.statusLight setBackgroundColor:[UIColor greenColor]];
+    }
+    else {
+        [self.statusLight setBackgroundColor:[UIColor redColor]];
+    }
+
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)theTextField {

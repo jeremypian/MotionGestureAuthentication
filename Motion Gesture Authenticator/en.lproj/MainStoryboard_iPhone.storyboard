@@ -37,11 +37,18 @@
                                     <action selector="changeGreeting:" destination="2" eventType="touchUpInside" id="oDh-2A-t2r"/>
                                 </connections>
                             </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eGJ-j5-Kp6">
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.30742612092391308" green="0.30742612092391308" blue="0.30742612092391308" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="lrW-v8-5QT" secondAttribute="bottom" constant="187" id="W1P-94-vm2"/>
+                            <constraint firstAttribute="bottom" secondItem="eGJ-j5-Kp6" secondAttribute="bottom" constant="184" id="Ehh-WG-fvW"/>
+                            <constraint firstAttribute="trailing" secondItem="eGJ-j5-Kp6" secondAttribute="trailing" constant="25" id="Jsk-2x-maW"/>
+                            <constraint firstItem="eGJ-j5-Kp6" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="LXa-3W-l5h"/>
+                            <constraint firstAttribute="bottom" secondItem="lrW-v8-5QT" secondAttribute="bottom" constant="54" id="QPu-S8-mo8"/>
                             <constraint firstItem="lrW-v8-5QT" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="dCN-Xe-s3I"/>
+                            <constraint firstItem="eGJ-j5-Kp6" firstAttribute="top" secondItem="3" secondAttribute="top" constant="197" id="dKE-0T-A94"/>
                             <constraint firstAttribute="trailing" secondItem="lrW-v8-5QT" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="fBN-sr-dCD"/>
                             <constraint firstItem="gnU-FF-LvB" firstAttribute="top" secondItem="3" secondAttribute="top" constant="104" id="fw4-zq-n28"/>
                             <constraint firstItem="2av-Ez-gvE" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="q8X-VM-FM2"/>
@@ -54,6 +61,7 @@
                     <navigationItem key="navigationItem" id="1u0-GK-y5p"/>
                     <connections>
                         <outlet property="label" destination="gnU-FF-LvB" id="ZKd-us-3SX"/>
+                        <outlet property="statusLight" destination="eGJ-j5-Kp6" id="JjN-sm-nfY"/>
                         <outlet property="textField" destination="2av-Ez-gvE" id="T5Q-xT-hIx"/>
                     </connections>
                 </viewController>
@@ -67,6 +75,7 @@
             <relationships>
                 <relationship kind="action" name="changeGreeting:"/>
                 <relationship kind="outlet" name="label" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="statusLight" candidateClass="UIView"/>
                 <relationship kind="outlet" name="textField" candidateClass="UITextField"/>
             </relationships>
         </class>
