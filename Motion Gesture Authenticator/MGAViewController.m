@@ -14,11 +14,15 @@
 
 @implementation MGAViewController
 @synthesize userName;
+@synthesize startStopButtonIsActive;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self.statusLight setBackgroundColor:[UIColor redColor]];
+    self.startStopButtonIsActive = NO;
+    self.accelerometer = [UIAccelerometer sharedAccelerometer];
 }
 
 - (void)didReceiveMemoryWarning
@@ -42,6 +46,19 @@
     else {
         [self.statusLight setBackgroundColor:[UIColor redColor]];
     }
+    if(self.startStopButtonIsActive == YES){
+        self.startStopButtonIsActive = NO;
+        [self.startStopBtn setTitle:@"Start" forState:UIControlStateNormal];
+        [self.startStopBtn setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
+
+        NSLog(@"Stopped Recording");
+    }
+    else{
+        self.startStopButtonIsActive = YES;
+        [self.startStopBtn setTitle:@"Stop" forState:UIControlStateNormal];
+        NSLog(@"Started Recording");
+    }
+    
 
 }
 
@@ -50,6 +67,13 @@
         [theTextField resignFirstResponder];
     }
     return YES;
+}
+
+- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
+    NSLog(@"%@%f", @"X: ", acceleration.x);
+    NSLog(@"%@%f", @"Y: ", acceleration.y);
+    NSLog(@"%@%f", @"Z: ", acceleration.z);
+
 }
 
 @end
