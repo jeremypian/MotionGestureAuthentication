@@ -15,14 +15,22 @@
 @implementation MGAViewController
 @synthesize userName;
 @synthesize startStopButtonIsActive;
+@synthesize accelerationPoints;
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     [self.statusLight setBackgroundColor:[UIColor redColor]];
+    
     self.startStopButtonIsActive = NO;
+    
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
+    self.accelerometer.updateInterval = .1;
+    self.accelerometer.delegate = self;
+    
+    self.accelerationPoints = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -50,12 +58,18 @@
         self.startStopButtonIsActive = NO;
         [self.startStopBtn setTitle:@"Start" forState:UIControlStateNormal];
         [self.startStopBtn setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
+        
+        for (NSNumber* x in self.accelerationPoints){
+            NSLog(@"(%f,0,0),", [x floatValue]);
+        }
+        
 
         NSLog(@"Stopped Recording");
     }
     else{
         self.startStopButtonIsActive = YES;
         [self.startStopBtn setTitle:@"Stop" forState:UIControlStateNormal];
+        [self.accelerationPoints removeAllObjects];
         NSLog(@"Started Recording");
     }
     
@@ -70,10 +84,11 @@
 }
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-    NSLog(@"%@%f", @"X: ", acceleration.x);
-    NSLog(@"%@%f", @"Y: ", acceleration.y);
-    NSLog(@"%@%f", @"Z: ", acceleration.z);
-
+    if(self.startStopButtonIsActive){
+        NSNumber* x = [NSNumber numberWithFloat:acceleration.x];
+        //NSLog(@"%@", x);
+        [self.accelerationPoints addObject:x];
+    }
 }
 
 @end

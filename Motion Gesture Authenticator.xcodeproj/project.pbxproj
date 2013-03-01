@@ -468,6 +468,7 @@
 				C766F62216D021890095B94A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C766F62316D021890095B94A /* Build configuration list for PBXNativeTarget "Motion Gesture AuthenticatorTests" */ = {
 			isa = XCConfigurationList;
@@ -476,6 +477,7 @@
 				C766F62516D021890095B94A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

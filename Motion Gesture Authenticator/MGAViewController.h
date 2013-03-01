@@ -13,10 +13,16 @@
 @property (weak, nonatomic) IBOutlet UITextField *textField;
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (copy, nonatomic) NSString *userName;
+@property (nonatomic) NSMutableArray *accelerationPoints;
 @property (nonatomic) BOOL startStopButtonIsActive;
 - (IBAction)changeGreeting:(id)sender;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
-
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
 
 @end
+/*
+@interface AccelerationPoint : NSObject
+@property float x; // If you're using char c, why not use int a?
+@property float y; // If you're using char c, why not use int a?
+@property float z; // If you're using char c, why not use int a?
+@end*/
