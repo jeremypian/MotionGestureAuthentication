@@ -10,6 +10,7 @@
 
 @interface MGAViewController : UIViewController <UIAccelerometerDelegate> {
     BOOL isAuthenticated;
+    float samplingInterval;
 }
 @property (nonatomic) BOOL isAuthenticated;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
@@ -19,6 +20,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
 - (IBAction)startAuthentication:(id)sender;
 - (void) authenticate;
+- (NSArray*) calculateVelocity;
+- (NSArray*) calculateDisplacement:(NSArray*)velocity;
 
 @end
 /*
