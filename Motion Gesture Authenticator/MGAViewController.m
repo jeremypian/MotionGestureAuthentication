@@ -79,6 +79,9 @@
 
 }
 
+/*
+ Current authentication scheme (simple): if phone moves right, then authenticate. Else, deny access.
+ */
 -(void) authenticate
 {
     NSArray* velocities = [self calculateVelocity];
