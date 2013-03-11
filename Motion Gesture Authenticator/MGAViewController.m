@@ -27,7 +27,7 @@
     self.startStopButtonIsActive = NO;
     
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
-    samplingInterval = 0.05;
+    samplingInterval = 0.01;
     self.accelerometer.updateInterval = samplingInterval;
     self.accelerometer.delegate = self;
     self.isAuthenticated = NO;
@@ -87,6 +87,7 @@
     NSArray* velocities = [self calculateVelocity];
     NSArray* displacements = [self calculateDisplacement:velocities];
     
+    
     NSLog(@"Acceleration");
     for (int i = 0; i<[self.accelerationPoints count]; i++){
         NSLog(@"(%f,%f),", [[self.accelerationPoints objectAtIndex:i] floatValue], samplingInterval * i);
@@ -97,7 +98,7 @@
         NSLog(@"(%f,%f),", [[velocities objectAtIndex:i] floatValue], samplingInterval * i);
     }
     
-    NSLog(@"Velocity");
+    NSLog(@"Displacements");
     for (int i = 0; i<[displacements count]; i++){
         NSLog(@"(%f,%f),", [[displacements objectAtIndex:i] floatValue], samplingInterval * i);
     }
@@ -139,7 +140,7 @@
 
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
     if(self.startStopButtonIsActive){
-        NSNumber* x = [NSNumber numberWithFloat:acceleration.x * 9.8];
+        NSNumber* x = [NSNumber numberWithFloat:-1.0*acceleration.x];
         //NSLog(@"%@", x);
         [self.accelerationPoints addObject:x];
     }
