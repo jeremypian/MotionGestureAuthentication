@@ -14,14 +14,12 @@
 }
 @property (nonatomic) BOOL isAuthenticated;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
-@property (nonatomic) NSMutableArray *accelerationPoints;
 @property (nonatomic) BOOL startStopButtonIsActive;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
+@property (nonatomic) NSMutableArray *accelerationPoints;
+
 - (IBAction)startAuthentication:(id)sender;
-- (void) authenticate;
-- (NSArray*) calculateVelocity;
-- (NSArray*) calculateDisplacement:(NSArray*)velocity;
 
 @end
 /*

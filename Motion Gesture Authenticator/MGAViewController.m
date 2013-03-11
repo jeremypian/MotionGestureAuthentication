@@ -7,6 +7,7 @@
 //
 
 #import "MGAViewController.h"
+#import "MGAKeySignature.h"
 
 @interface MGAViewController ()
 
@@ -15,6 +16,7 @@
 @implementation MGAViewController
 @synthesize startStopButtonIsActive;
 @synthesize accelerationPoints;
+
 
 
 - (void)viewDidLoad
@@ -43,7 +45,10 @@
 
 - (IBAction)startAuthentication:(id)sender {
     if(self.startStopButtonIsActive == YES){
-        [self authenticate];
+        self.startStopButtonIsActive = NO;
+        
+        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndSamplingInterval:samplingInterval];
+        isAuthenticated = [sig authenticate];
         
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
@@ -53,8 +58,6 @@
             [self.statusLabel setText:@"Imposter!"];
             [self.statusLabel setBackgroundColor:[UIColor redColor]];
         }
-        
-        self.startStopButtonIsActive = NO;
         
         [self.startStopBtn setTitle:@"Start Authentication" forState:UIControlStateNormal];
 
@@ -79,68 +82,13 @@
 
 }
 
-/*
- Current authentication scheme (simple): if phone moves right, then authenticate. Else, deny access.
- */
--(void) authenticate
-{
-    NSArray* velocities = [self calculateVelocity];
-    NSArray* displacements = [self calculateDisplacement:velocities];
-    
-    
-    NSLog(@"Acceleration");
-    for (int i = 0; i<[self.accelerationPoints count]; i++){
-        NSLog(@"(%f,%f),", [[self.accelerationPoints objectAtIndex:i] floatValue], samplingInterval * i);
-    }
-    
-    NSLog(@"Velocity");
-    for (int i = 0; i<[velocities count]; i++){
-        NSLog(@"(%f,%f),", [[velocities objectAtIndex:i] floatValue], samplingInterval * i);
-    }
-    
-    NSLog(@"Displacements");
-    for (int i = 0; i<[displacements count]; i++){
-        NSLog(@"(%f,%f),", [[displacements objectAtIndex:i] floatValue], samplingInterval * i);
-    }
-    NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
-    if(totalDisplacement > [NSNumber numberWithFloat:0.0])
-        isAuthenticated = YES;
-    else
-        isAuthenticated = NO;
-    
-}
-
--(NSArray*) calculateVelocity
-{
-    NSMutableArray *velocity = [[NSMutableArray alloc] initWithCapacity:[self.accelerationPoints count] + 1];
-    [velocity insertObject:[NSNumber numberWithInt:0] atIndex:0];
-    for (int i = 1; i<[self.accelerationPoints count]; i++){
-        float a_i = [[self.accelerationPoints objectAtIndex:i - 1] floatValue];
-        float v_prev = [[velocity objectAtIndex:i-1] floatValue];
-        float v_i = v_prev + a_i * samplingInterval;
-        [velocity insertObject:[NSNumber numberWithFloat: v_i] atIndex:i];
-    }
-    return velocity;
-}
-
--(NSArray*) calculateDisplacement:(NSArray *)velocity
-{
-    NSMutableArray *displacement = [[NSMutableArray alloc] initWithCapacity:[self.accelerationPoints count] + 1];
-    [displacement insertObject:[NSNumber numberWithInt:0] atIndex:0];
-    for (int i = 1; i<[self.accelerationPoints count]; i++){
-        float v_i = [[velocity objectAtIndex:i - 1 ] floatValue];
-        float a_i = [[self.accelerationPoints objectAtIndex:i - 1] floatValue];
-        float d_prev = [[displacement objectAtIndex:i-1] floatValue];
-        float d_i = d_prev + v_i * samplingInterval + 0.5 * a_i * pow(samplingInterval, 2);
-        [displacement insertObject:[NSNumber numberWithFloat:d_i] atIndex:i];
-    }
-    return displacement;
-    
-}
-
 - (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
     if(self.startStopButtonIsActive){
-        NSNumber* x = [NSNumber numberWithFloat:-1.0*acceleration.x];
+        // Filter out noise
+        float a_x = fabsf(acceleration.x) >= 0.0 ? acceleration.x : 0.0;
+        // Invert accelerometer axes.   
+        a_x = -1.0 * a_x;
+        NSNumber* x = [NSNumber numberWithFloat:a_x];
         //NSLog(@"%@", x);
         [self.accelerationPoints addObject:x];
     }

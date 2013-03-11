@@ -24,6 +24,7 @@
 		C766F61216D021890095B94A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C766F5EA16D021890095B94A /* Foundation.framework */; };
 		C766F61A16D021890095B94A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C766F61816D021890095B94A /* InfoPlist.strings */; };
 		C766F61D16D021890095B94A /* Motion_Gesture_AuthenticatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C766F61C16D021890095B94A /* Motion_Gesture_AuthenticatorTests.m */; };
+		C7B0A0D616ED775100672E68 /* MGAKeySignature.m in Sources */ = {isa = PBXBuildFile; fileRef = C7B0A0D516ED775100672E68 /* MGAKeySignature.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,8 @@
 		C766F61916D021890095B94A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C766F61B16D021890095B94A /* Motion_Gesture_AuthenticatorTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Motion_Gesture_AuthenticatorTests.h; sourceTree = "<group>"; };
 		C766F61C16D021890095B94A /* Motion_Gesture_AuthenticatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Motion_Gesture_AuthenticatorTests.m; sourceTree = "<group>"; };
+		C7B0A0D416ED775100672E68 /* MGAKeySignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGAKeySignature.h; sourceTree = "<group>"; };
+		C7B0A0D516ED775100672E68 /* MGAKeySignature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MGAKeySignature.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 				C766F60316D021890095B94A /* MainStoryboard_iPad.storyboard */,
 				C766F60616D021890095B94A /* MGAViewController.h */,
 				C766F60716D021890095B94A /* MGAViewController.m */,
+				C7B0A0D416ED775100672E68 /* MGAKeySignature.h */,
+				C7B0A0D516ED775100672E68 /* MGAKeySignature.m */,
 				C766F5EF16D021890095B94A /* Supporting Files */,
 			);
 			path = "Motion Gesture Authenticator";
@@ -278,6 +283,7 @@
 				C766F5F516D021890095B94A /* main.m in Sources */,
 				C766F5F916D021890095B94A /* MGAAppDelegate.m in Sources */,
 				C766F60816D021890095B94A /* MGAViewController.m in Sources */,
+				C7B0A0D616ED775100672E68 /* MGAKeySignature.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
