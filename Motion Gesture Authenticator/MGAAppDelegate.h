@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <CoreMotion/CoreMotion.h>
 
-@interface MGAAppDelegate : UIResponder <UIApplicationDelegate> {
-    CMMotionManager *motionManager;
-}
-@property (readonly) CMMotionManager *motionManager;
+@interface MGAAppDelegate : UIResponder <UIApplicationDelegate>
+
 @property (strong, nonatomic) UIWindow *window;
 
 @end

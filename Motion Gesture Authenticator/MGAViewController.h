@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MGAViewController : UIViewController {
+@interface MGAViewController : UIViewController <UIAccelerometerDelegate>{
     BOOL isAuthenticated;
     float samplingInterval;
 }
