@@ -30,33 +30,38 @@
  */
 -(BOOL) authenticate
 {
-    NSArray* velocities = [self calculateVelocity:self.accelerationPointsX];
-    NSArray* displacements = [self calculateDisplacementWithVelocity:velocities AndAcceleration:self.accelerationPointsX];
+    NSArray* velocities_x = [self calculateVelocity:self.accelerationPointsX];
+    NSArray* displacements_x = [self calculateDisplacementWithVelocity:velocities_x AndAcceleration:self.accelerationPointsX];
+    
+    NSArray* velocities_y = [self calculateVelocity:self.accelerationPointsY];
+    NSArray* displacements_y = [self calculateDisplacementWithVelocity:velocities_y AndAcceleration:self.accelerationPointsY];
     
     
     NSLog(@"Acceleration");
     NSMutableString *output = [[NSMutableString alloc] init];
-    for (int i = 0; i<[self.accelerationPointsX count]; i++){
-        [output appendString:[NSString stringWithFormat:@"%@,", [self.accelerationPointsX objectAtIndex:i]]];
+    for (int i = 0; i<[self.accelerationPointsY count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [self.accelerationPointsY objectAtIndex:i]]];
     }
     NSLog(@"%@", output);
     
+    
     output = [[NSMutableString alloc] init];
     NSLog(@"Velocity");
-    for (int i = 0; i<[velocities count]; i++){
-        [output appendString:[NSString stringWithFormat:@"%@,", [velocities objectAtIndex:i]]];
+    for (int i = 0; i<[velocities_y count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [velocities_y objectAtIndex:i]]];
     }
     NSLog(@"%@", output);
 
     NSLog(@"Displacements");
     output = [[NSMutableString alloc] init];
-    for (int i = 0; i<[displacements count]; i++){
-        [output appendString:[NSString stringWithFormat:@"%@,", [displacements objectAtIndex:i]]];
+    for (int i = 0; i<[displacements_y count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [displacements_y objectAtIndex:i]]];
     }
     NSLog(@"%@", output);
     
-    NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
-    BOOL pass = ([totalDisplacement floatValue] > 0.0);
+    
+    //NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
+    BOOL pass = YES;
     return pass;
 }
 

@@ -54,7 +54,6 @@
 - (IBAction)startAuthentication:(id)sender {
     if(self.startStopButtonIsActive == YES){
         self.startStopButtonIsActive = NO;
-        //[self stopMotionDetect];
 
         MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPointsX:self.accelerationPointsX Y:self.accelerationPointsY AndSamplingInterval:samplingInterval];
         isAuthenticated = [sig authenticate];
@@ -74,7 +73,6 @@
     else{
         [self.statusLabel setText:@"Recording motion"];
         [self.statusLabel setBackgroundColor:[UIColor blueColor]];
-        //[self startMotionDetect];
 
         // Delete the recorded points before starting fresh
         // Should appear before setting startStopButtonIsActive to True or we might have race conditions
