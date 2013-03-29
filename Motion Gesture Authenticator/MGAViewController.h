@@ -19,10 +19,15 @@
 @property (nonatomic) BOOL recordButtonIsActive;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
+@property (nonatomic) NSMutableArray *accelerationPointsX;
+@property (nonatomic) NSMutableArray *accelerationPointsY;
+@property (nonatomic) NSMutableArray *accelerationPointsZ;
 @property (weak, nonatomic) IBOutlet UIButton *recordBtn;
-@property (nonatomic) NSMutableArray *recordedMotion;
-@property (nonatomic) NSMutableArray *accelerationPoints;
+@property (nonatomic) NSMutableArray *recordedMotionX;
+@property (nonatomic) NSMutableArray *recordedMotionY;
+@property (nonatomic) NSMutableArray *recordedMotionZ;
 - (IBAction)recordMotion:(id)sender;
+
 
 - (IBAction)startAuthentication:(id)sender;
 

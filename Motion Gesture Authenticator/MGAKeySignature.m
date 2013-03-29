@@ -9,16 +9,21 @@
 #import "MGAKeySignature.h"
 
 @implementation MGAKeySignature
-@synthesize accelerationPoints;
-@synthesize recordedMotion;
+@synthesize accelerationPointsX;
+@synthesize accelerationPointsY;
+@synthesize recordedMotionX;
+@synthesize recordedMotionY;
 
--(id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndRecordedMotion: (NSArray*)_recordedMotion AndSamplingInterval: (float)_samplingInterval
+
+-(id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY AndRecordedMotionX: (NSArray*)_recordedMotionX AndRecordedMotionY:(NSArray *)_recordedMotionY AndSamplingInterval: (float)_samplingInterval
 {
     self = [super init];
     if (self) {
         samplingInterval  = _samplingInterval;
-        accelerationPoints = _accelerationPoints;
-        recordedMotion = _recordedMotion;
+        accelerationPointsX = _accelerationPointsX;
+        accelerationPointsY = _accelerationPointsY;
+        recordedMotionX = _recordedMotionX;
+        recordedMotionY = _recordedMotionY;
     }
     return self;
 }
@@ -28,6 +33,7 @@
  */
 -(BOOL) authenticate
 {
+    
     NSArray* velocities_x = [self calculateVelocity:self.accelerationPointsX];
     NSArray* displacements_x = [self calculateDisplacementWithVelocity:velocities_x AndAcceleration:self.accelerationPointsX];
     
@@ -40,7 +46,10 @@
     for (int i = 0; i<[self.accelerationPointsY count]; i++){
         [output appendString:[NSString stringWithFormat:@"%@,", [self.accelerationPointsY objectAtIndex:i]]];
     }
+    NSLog(@"%@", output);
     
+    
+    output = [[NSMutableString alloc] init];
     NSLog(@"Velocity");
     for (int i = 0; i<[velocities_y count]; i++){
         [output appendString:[NSString stringWithFormat:@"%@,", [velocities_y objectAtIndex:i]]];
@@ -48,23 +57,27 @@
     NSLog(@"%@", output);
 
     NSLog(@"Displacements");
-    for (int i = 0; i<[displacements count]; i++){
-        NSLog(@"(%f,%f),", [[displacements objectAtIndex:i] floatValue], samplingInterval * i);
-    }*/
-    
-    BOOL pass = [self dynamicTimeWarp:self.accelerationPoints];
+    output = [[NSMutableString alloc] init];
+    for (int i = 0; i<[displacements_y count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [displacements_y objectAtIndex:i]]];
+    }
+    NSLog(@"%@", output);
+    */
+    BOOL pass = YES;
+    float x_cost = [self dynamicTimeWarp:self.accelerationPointsX AndRecorded:self.recordedMotionX];
+    float y_cost = [self dynamicTimeWarp:self.accelerationPointsY AndRecorded:self.recordedMotionY];
     //NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
     //BOOL pass = ([totalDisplacement floatValue] > 0.0);
     return pass;
 }
 
--(BOOL) dynamicTimeWarp:(NSArray *) values
+-(float) dynamicTimeWarp:(NSArray *)measured AndRecorded:(NSArray *)recorded
 {
     //NSMutableArray *storedGesture = [[NSMutableArray alloc] initWithCapacity:100];
 //    float storedGesture[6] = {0.0f, 0.005f, 0.01f, 0.013f, 0.018f, 0.023f};
-    float matrix[[self.recordedMotion count]][[values count]];
-    for (int i = 0; i < [self.recordedMotion count]; ++i) {
-        for (int j = 0; j < [values count]; ++j) {
+    float matrix[[recorded count]][[measured count]];
+    for (int i = 0; i < [recorded count]; ++i) {
+        for (int j = 0; j < [measured count]; ++j) {
             float secondTerm;
             if (i == 0 && j == 0) {
                 secondTerm = 0;
@@ -76,13 +89,13 @@
                 secondTerm = fminf(matrix[i][j-1], fminf(matrix[i-1][j], matrix[i-1][j-1]));
             }
             // Calculate distance using distance function
-            matrix[i][j] = [self dtwCost:[[self.recordedMotion objectAtIndex:i] floatValue] AndY:[[values objectAtIndex:j] floatValue]] + secondTerm;
+            matrix[i][j] = [self dtwCost:[[recorded objectAtIndex:i] floatValue] AndY:[[measured objectAtIndex:j] floatValue]] + secondTerm;
             //NSLog(@"matrix [%i, %i] %f", i, j, matrix[i][j]);
         }
     }
-    float cost = matrix[[self.recordedMotion count]-1][[values count] - 1];
+    float cost = matrix[[recorded count] - 1][[measured count] - 1];
     NSLog(@"DYNAMICTIMEWARPCOST %f",  cost);
-    return true;
+    return cost;
 }
 
 -(float) dtwCost:(float) x AndY: (float) y
@@ -90,7 +103,7 @@
     return pow((x-y), 2);
 }
 
--(NSArray*) calculateVelocity
+-(NSArray*) calculateVelocity:(NSArray*)accelerationPoints
 {
     NSMutableArray *velocity = [[NSMutableArray alloc] initWithCapacity:[accelerationPoints count] + 1];
     [velocity insertObject:[NSNumber numberWithInt:0] atIndex:0];

@@ -17,10 +17,16 @@
 @implementation MGAViewController
 @synthesize startStopButtonIsActive;
 @synthesize recordButtonIsActive;
-@synthesize recordedMotion;
-@synthesize accelerationPoints;
+@synthesize recordedMotionX;
+@synthesize recordedMotionY;
+@synthesize recordedMotionZ;
+@synthesize accelerationPointsX;
+@synthesize accelerationPointsY;
+@synthesize accelerationPointsZ;
 @synthesize isAuthenticated;
 @synthesize isRecorded;
+
+
 
 
 - (void)viewDidLoad
@@ -31,17 +37,23 @@
     [self.statusLabel setBackgroundColor:[UIColor blueColor]];
     
     self.startStopButtonIsActive = NO;
+
+    samplingInterval = 0.01;
     self.recordButtonIsActive = NO;
     
-    self.accelerometer = [UIAccelerometer sharedAccelerometer];
-    samplingInterval = 0.01;
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
     self.accelerometer.delegate = self;
     [self.accelerometer setUpdateInterval:samplingInterval];
     
     self.isAuthenticated = NO;
-    self.accelerationPoints = [[NSMutableArray alloc] init];
-    self.recordedMotion = [[NSMutableArray alloc] init];
+    
+    self.accelerationPointsY = [[NSMutableArray alloc] init];
+    self.accelerationPointsX = [[NSMutableArray alloc] init];
+    self.accelerationPointsZ = [[NSMutableArray alloc] init];
+
+    self.recordedMotionX = [[NSMutableArray alloc] init];
+    self.recordedMotionY = [[NSMutableArray alloc] init];
+    self.recordedMotionZ = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -57,14 +69,15 @@
         [self.recordBtn setTitle:@"Re-record Motion" forState:UIControlStateNormal];
         [self.statusLabel setText:@"RECORDED"];
         [self.statusLabel setBackgroundColor:[UIColor blueColor]];
-        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
         NSLog(@"Motion Recorded");
     }
     else{
 
         // Delete the recorded points before starting fresh
         // Should appear before setting startStopButtonIsActive to True or we might have race conditions
-        [self.recordedMotion removeAllObjects];
+        [self.recordedMotionX removeAllObjects];
+        [self.recordedMotionY removeAllObjects];
+        [self.recordedMotionZ removeAllObjects];
         self.recordButtonIsActive = YES;
         self.isRecorded = NO;
         [self.statusLabel setText:@"Recording motion..."];
@@ -83,8 +96,8 @@
     }
     if(self.startStopButtonIsActive == YES){
         self.startStopButtonIsActive = NO;
-        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
-        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndRecordedMotion:self.recordedMotion AndSamplingInterval:samplingInterval];
+
+        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPointsX:self.accelerationPointsX Y:self.accelerationPointsY AndRecordedMotionX:recordedMotionX AndRecordedMotionY:recordedMotionY AndSamplingInterval:samplingInterval];
         isAuthenticated = [sig authenticate];
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
@@ -129,16 +142,26 @@
         a_x = -1.0 * a_x;
         a_y = -1.0 * a_y - 1;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
-        //NSLog(@"%@", x);
-        [self.accelerationPoints addObject:x];
+        NSNumber* y = [NSNumber numberWithFloat:a_y];
+        
+        //NSLog(@"%@", y);
+        [self.accelerationPointsX addObject:x];
+        [self.accelerationPointsY addObject:y];
+
     } else if (self.recordButtonIsActive){
         // Filter out noise
-        float a_x = fabsf(acceleration.x) >= 0.0 ? acceleration.x : 0.0;
+        float a_x = acceleration.x;
+        float a_y = acceleration.y;
+        
         // Invert accelerometer axes.
         a_x = -1.0 * a_x;
+        a_y = -1.0 * a_y - 1;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
-        NSLog(@"%@", x);
-        [self.recordedMotion addObject:x];
+        NSNumber* y = [NSNumber numberWithFloat:a_y];
+        
+        //NSLog(@"%@", y);
+        [self.recordedMotionX addObject:x];
+        [self.recordedMotionY addObject:y];
     }
 }
 
