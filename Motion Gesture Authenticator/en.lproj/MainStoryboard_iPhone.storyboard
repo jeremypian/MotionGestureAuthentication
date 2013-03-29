@@ -31,6 +31,8 @@
                                 </state>
                                 <connections>
                                     <action selector="startAuthentication:" destination="2" eventType="touchUpInside" id="OlR-VA-K9K"/>
+                                    <action selector="startAuthentication:" destination="2" eventType="touchDown" id="mmm-rG-CSB"/>
+                                    <action selector="startAuthentication:" destination="2" eventType="touchUpOutside" id="vQX-ub-299"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qoe-15-gzt">
@@ -43,6 +45,8 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
+                                    <action selector="recordMotion:" destination="2" eventType="touchDown" id="DYh-a4-eYA"/>
+                                    <action selector="recordMotion:" destination="2" eventType="touchUpOutside" id="LRT-7f-7dx"/>
                                     <action selector="recordMotion:" destination="2" eventType="touchUpInside" id="MXJ-sK-RPg"/>
                                 </connections>
                             </button>
