@@ -10,13 +10,15 @@
 
 @implementation MGAKeySignature
 @synthesize accelerationPoints;
+@synthesize recordedMotion;
 
--(id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndSamplingInterval: (float)_samplingInterval
+-(id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndRecordedMotion: (NSArray*)_recordedMotion AndSamplingInterval: (float)_samplingInterval
 {
     self = [super init];
     if (self) {
-       samplingInterval  = _samplingInterval;
-       accelerationPoints = _accelerationPoints;
+        samplingInterval  = _samplingInterval;
+        accelerationPoints = _accelerationPoints;
+        recordedMotion = _recordedMotion;
     }
     return self;
 }
@@ -29,12 +31,12 @@
     NSArray* velocities = [self calculateVelocity];
     NSArray* displacements = [self calculateDisplacement:velocities];
     
-    
+    /*
     NSLog(@"Acceleration");
     for (int i = 0; i<[self.accelerationPoints count]; i++){
         NSLog(@"(%f,%f),", [[self.accelerationPoints objectAtIndex:i] floatValue], samplingInterval * i);
     }
-    /*
+    
     NSLog(@"Velocity");
     for (int i = 0; i<[velocities count]; i++){
         NSLog(@"(%f,%f),", [[velocities objectAtIndex:i] floatValue], samplingInterval * i);
@@ -43,11 +45,44 @@
     NSLog(@"Displacements");
     for (int i = 0; i<[displacements count]; i++){
         NSLog(@"(%f,%f),", [[displacements objectAtIndex:i] floatValue], samplingInterval * i);
-    }
-     */
-    NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
-    BOOL pass = ([totalDisplacement floatValue] > 0.0);
+    }*/
+    
+    BOOL pass = [self dynamicTimeWarp:self.accelerationPoints];
+    //NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
+    //BOOL pass = ([totalDisplacement floatValue] > 0.0);
     return pass;
+}
+
+-(BOOL) dynamicTimeWarp:(NSArray *) values
+{
+    //NSMutableArray *storedGesture = [[NSMutableArray alloc] initWithCapacity:100];
+//    float storedGesture[6] = {0.0f, 0.005f, 0.01f, 0.013f, 0.018f, 0.023f};
+    float matrix[[self.recordedMotion count]][[values count]];
+    for (int i = 0; i < [self.recordedMotion count]; ++i) {
+        for (int j = 0; j < [values count]; ++j) {
+            float secondTerm;
+            if (i == 0 && j == 0) {
+                secondTerm = 0;
+            } else if (i == 0) {
+                secondTerm = matrix[i][j-1];
+            } else if (j == 0) {
+                secondTerm = matrix[i-1][j];
+            } else {
+                secondTerm = fminf(matrix[i][j-1], fminf(matrix[i-1][j], matrix[i-1][j-1]));
+            }
+            // Calculate distance using distance function
+            matrix[i][j] = [self dtwCost:[[self.recordedMotion objectAtIndex:i] floatValue] AndY:[[values objectAtIndex:j] floatValue]] + secondTerm;
+            //NSLog(@"matrix [%i, %i] %f", i, j, matrix[i][j]);
+        }
+    }
+    float cost = matrix[[self.recordedMotion count]-1][[values count] - 1];
+    NSLog(@"DYNAMICTIMEWARPCOST %f",  cost);
+    return true;
+}
+
+-(float) dtwCost:(float) x AndY: (float) y
+{
+    return pow((x-y), 2);
 }
 
 -(NSArray*) calculateVelocity

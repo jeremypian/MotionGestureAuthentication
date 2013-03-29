@@ -15,8 +15,11 @@
 
 @implementation MGAViewController
 @synthesize startStopButtonIsActive;
+@synthesize recordButtonIsActive;
+@synthesize recordedMotion;
 @synthesize accelerationPoints;
-
+@synthesize isAuthenticated;
+@synthesize isRecorded;
 
 
 - (void)viewDidLoad
@@ -27,14 +30,15 @@
     [self.statusLabel setBackgroundColor:[UIColor blueColor]];
     
     self.startStopButtonIsActive = NO;
+    self.recordButtonIsActive = NO;
     
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
     samplingInterval = 0.01;
     self.accelerometer.updateInterval = samplingInterval;
     self.accelerometer.delegate = self;
     self.isAuthenticated = NO;
-    
     self.accelerationPoints = [[NSMutableArray alloc] init];
+    self.recordedMotion = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning
@@ -43,11 +47,41 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)recordMotion:(id)sender {
+    if(self.recordButtonIsActive == YES){
+        self.recordButtonIsActive = NO;
+        self.isRecorded = YES;
+        [self.recordBtn setTitle:@"Re-record Motion" forState:UIControlStateNormal];
+        [self.statusLabel setText:@"RECORDED"];
+        [self.statusLabel setBackgroundColor:[UIColor blueColor]];
+        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
+        NSLog(@"Motion Recorded");
+    }
+    else{
+
+        // Delete the recorded points before starting fresh
+        // Should appear before setting startStopButtonIsActive to True or we might have race conditions
+        [self.recordedMotion removeAllObjects];
+        self.recordButtonIsActive = YES;
+        self.isRecorded = NO;
+        [self.statusLabel setText:@"Recording motion..."];
+        [self.statusLabel setBackgroundColor:[UIColor brownColor]];
+        [self.recordBtn setTitle:@"Recording..." forState:UIControlStateNormal];
+        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
+        
+        
+        NSLog(@"Started Recording Motion");
+    }
+}
+
 - (IBAction)startAuthentication:(id)sender {
+    if (!self.isRecorded) {
+        return;
+    }
     if(self.startStopButtonIsActive == YES){
         self.startStopButtonIsActive = NO;
-        
-        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndSamplingInterval:samplingInterval];
+        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
+        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndRecordedMotion:self.recordedMotion AndSamplingInterval:samplingInterval];
         isAuthenticated = [sig authenticate];
         
         if(isAuthenticated){
@@ -64,7 +98,7 @@
         NSLog(@"Stopped Recording");
     }
     else{
-        [self.statusLabel setText:@"Recording motion"];
+        [self.statusLabel setText:@"Authenticating motion"];
         [self.statusLabel setBackgroundColor:[UIColor blueColor]];
 
         // Delete the recorded points before starting fresh
@@ -73,8 +107,6 @@
         self.startStopButtonIsActive = YES;
         isAuthenticated = NO;
         [self.startStopBtn setTitle:@"Stop" forState:UIControlStateNormal];
-        
-        
         
         NSLog(@"Started Recording");
     }
@@ -91,6 +123,14 @@
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         //NSLog(@"%@", x);
         [self.accelerationPoints addObject:x];
+    } else if (self.recordButtonIsActive){
+        // Filter out noise
+        float a_x = fabsf(acceleration.x) >= 0.0 ? acceleration.x : 0.0;
+        // Invert accelerometer axes.
+        a_x = -1.0 * a_x;
+        NSNumber* x = [NSNumber numberWithFloat:a_x];
+        NSLog(@"%@", x);
+        [self.recordedMotion addObject:x];
     }
 }
 

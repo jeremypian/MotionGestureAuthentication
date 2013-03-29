@@ -13,8 +13,9 @@
     float samplingInterval;
 }
 @property (nonatomic) NSArray *accelerationPoints;
+@property (nonatomic) NSArray *recordedMotion;
 - (BOOL) authenticate;
-- (id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndSamplingInterval: (float)_samplingInterval;
+- (id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndRecordedMotion: (NSArray*)_recoredMotion AndSamplingInterval: (float)_samplingInterval;
 - (NSArray*) calculateVelocity;
 - (NSArray*) calculateDisplacement:(NSArray*)velocity;
 @end

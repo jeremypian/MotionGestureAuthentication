@@ -13,11 +13,16 @@
     float samplingInterval;
 }
 @property (nonatomic) BOOL isAuthenticated;
+@property (nonatomic) BOOL isRecorded;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (nonatomic) BOOL startStopButtonIsActive;
+@property (nonatomic) BOOL recordButtonIsActive;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
+@property (weak, nonatomic) IBOutlet UIButton *recordBtn;
+@property (nonatomic) NSMutableArray *recordedMotion;
 @property (nonatomic) NSMutableArray *accelerationPoints;
+- (IBAction)recordMotion:(id)sender;
 
 - (IBAction)startAuthentication:(id)sender;
 
