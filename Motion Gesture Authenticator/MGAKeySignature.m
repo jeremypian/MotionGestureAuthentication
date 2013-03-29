@@ -28,20 +28,25 @@
  */
 -(BOOL) authenticate
 {
-    NSArray* velocities = [self calculateVelocity];
-    NSArray* displacements = [self calculateDisplacement:velocities];
+    NSArray* velocities_x = [self calculateVelocity:self.accelerationPointsX];
+    NSArray* displacements_x = [self calculateDisplacementWithVelocity:velocities_x AndAcceleration:self.accelerationPointsX];
+    
+    NSArray* velocities_y = [self calculateVelocity:self.accelerationPointsY];
+    NSArray* displacements_y = [self calculateDisplacementWithVelocity:velocities_y AndAcceleration:self.accelerationPointsY];
     
     /*
     NSLog(@"Acceleration");
-    for (int i = 0; i<[self.accelerationPoints count]; i++){
-        NSLog(@"(%f,%f),", [[self.accelerationPoints objectAtIndex:i] floatValue], samplingInterval * i);
+    NSMutableString *output = [[NSMutableString alloc] init];
+    for (int i = 0; i<[self.accelerationPointsY count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [self.accelerationPointsY objectAtIndex:i]]];
     }
     
     NSLog(@"Velocity");
-    for (int i = 0; i<[velocities count]; i++){
-        NSLog(@"(%f,%f),", [[velocities objectAtIndex:i] floatValue], samplingInterval * i);
+    for (int i = 0; i<[velocities_y count]; i++){
+        [output appendString:[NSString stringWithFormat:@"%@,", [velocities_y objectAtIndex:i]]];
     }
-    
+    NSLog(@"%@", output);
+
     NSLog(@"Displacements");
     for (int i = 0; i<[displacements count]; i++){
         NSLog(@"(%f,%f),", [[displacements objectAtIndex:i] floatValue], samplingInterval * i);
@@ -87,10 +92,10 @@
 
 -(NSArray*) calculateVelocity
 {
-    NSMutableArray *velocity = [[NSMutableArray alloc] initWithCapacity:[self.accelerationPoints count] + 1];
+    NSMutableArray *velocity = [[NSMutableArray alloc] initWithCapacity:[accelerationPoints count] + 1];
     [velocity insertObject:[NSNumber numberWithInt:0] atIndex:0];
-    for (int i = 1; i<[self.accelerationPoints count]; i++){
-        float a_i = [[self.accelerationPoints objectAtIndex:i - 1] floatValue];
+    for (int i = 1; i<[accelerationPoints count]; i++){
+        float a_i = [[accelerationPoints objectAtIndex:i - 1] floatValue];
         float v_prev = [[velocity objectAtIndex:i-1] floatValue];
         float v_i = v_prev + a_i * samplingInterval;
         [velocity insertObject:[NSNumber numberWithFloat: v_i] atIndex:i];
@@ -98,13 +103,13 @@
     return velocity;
 }
 
--(NSArray*) calculateDisplacement:(NSArray *)velocity
+-(NSArray*) calculateDisplacementWithVelocity:(NSArray *)velocity AndAcceleration:(NSArray *)accelerationPoints
 {
-    NSMutableArray *displacement = [[NSMutableArray alloc] initWithCapacity:[self.accelerationPoints count] + 1];
+    NSMutableArray *displacement = [[NSMutableArray alloc] initWithCapacity:[accelerationPoints count] + 1];
     [displacement insertObject:[NSNumber numberWithInt:0] atIndex:0];
-    for (int i = 1; i<[self.accelerationPoints count]; i++){
+    for (int i = 1; i<[accelerationPoints count]; i++){
         float v_i = [[velocity objectAtIndex:i - 1 ] floatValue];
-        float a_i = [[self.accelerationPoints objectAtIndex:i - 1] floatValue];
+        float a_i = [[accelerationPoints objectAtIndex:i - 1] floatValue];
         float d_prev = [[displacement objectAtIndex:i-1] floatValue];
         float d_i = d_prev + v_i * samplingInterval + 0.5 * a_i * pow(samplingInterval, 2);
         [displacement insertObject:[NSNumber numberWithFloat:d_i] atIndex:i];

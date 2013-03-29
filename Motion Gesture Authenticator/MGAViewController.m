@@ -8,6 +8,7 @@
 
 #import "MGAViewController.h"
 #import "MGAKeySignature.h"
+#import <CoreMotion/CoreMotion.h>
 
 @interface MGAViewController ()
 
@@ -34,8 +35,10 @@
     
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
     samplingInterval = 0.01;
-    self.accelerometer.updateInterval = samplingInterval;
+    self.accelerometer = [UIAccelerometer sharedAccelerometer];
     self.accelerometer.delegate = self;
+    [self.accelerometer setUpdateInterval:samplingInterval];
+    
     self.isAuthenticated = NO;
     self.accelerationPoints = [[NSMutableArray alloc] init];
     self.recordedMotion = [[NSMutableArray alloc] init];
@@ -83,7 +86,6 @@
         //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
         MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndRecordedMotion:self.recordedMotion AndSamplingInterval:samplingInterval];
         isAuthenticated = [sig authenticate];
-        
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
             [self.statusLabel setBackgroundColor:[UIColor greenColor]];
@@ -103,7 +105,10 @@
 
         // Delete the recorded points before starting fresh
         // Should appear before setting startStopButtonIsActive to True or we might have race conditions
-        [self.accelerationPoints removeAllObjects];
+        [self.accelerationPointsX removeAllObjects];
+        [self.accelerationPointsY removeAllObjects];
+        [self.accelerationPointsZ removeAllObjects];
+
         self.startStopButtonIsActive = YES;
         isAuthenticated = NO;
         [self.startStopBtn setTitle:@"Stop" forState:UIControlStateNormal];
@@ -114,12 +119,15 @@
 
 }
 
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
+-(void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
     if(self.startStopButtonIsActive){
         // Filter out noise
-        float a_x = fabsf(acceleration.x) >= 0.0 ? acceleration.x : 0.0;
-        // Invert accelerometer axes.   
+        float a_x = acceleration.x;
+        float a_y = acceleration.y;
+        
+        // Invert accelerometer axes.
         a_x = -1.0 * a_x;
+        a_y = -1.0 * a_y - 1;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         //NSLog(@"%@", x);
         [self.accelerationPoints addObject:x];
@@ -133,5 +141,6 @@
         [self.recordedMotion addObject:x];
     }
 }
+
 
 @end

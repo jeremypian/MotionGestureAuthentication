@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface MGAKeySignature : NSObject {
-    NSArray* accelerationPoints;
+    NSArray* accelerationPointsX;
+    NSArray* accelerationPointsY;
     float samplingInterval;
 }
 @property (nonatomic) NSArray *accelerationPoints;
