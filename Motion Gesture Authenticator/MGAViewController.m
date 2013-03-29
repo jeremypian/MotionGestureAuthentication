@@ -8,6 +8,7 @@
 
 #import "MGAViewController.h"
 #import "MGAKeySignature.h"
+#import <CoreMotion/CoreMotion.h>
 
 @interface MGAViewController ()
 
@@ -27,11 +28,9 @@
     [self.statusLabel setBackgroundColor:[UIColor blueColor]];
     
     self.startStopButtonIsActive = NO;
-    
-    self.accelerometer = [UIAccelerometer sharedAccelerometer];
+
     samplingInterval = 0.01;
-    self.accelerometer.updateInterval = samplingInterval;
-    self.accelerometer.delegate = self;
+    [[UIAccelerometer sharedAccelerometer] setUpdateInterval:samplingInterval];
     self.isAuthenticated = NO;
     
     self.accelerationPoints = [[NSMutableArray alloc] init];
@@ -49,7 +48,7 @@
         
         MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndSamplingInterval:samplingInterval];
         isAuthenticated = [sig authenticate];
-        
+        [self stopMotionDetect];
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
             [self.statusLabel setBackgroundColor:[UIColor greenColor]];
@@ -66,6 +65,7 @@
     else{
         [self.statusLabel setText:@"Recording motion"];
         [self.statusLabel setBackgroundColor:[UIColor blueColor]];
+        [self startMotionDetect];
 
         // Delete the recorded points before starting fresh
         // Should appear before setting startStopButtonIsActive to True or we might have race conditions
@@ -82,16 +82,45 @@
 
 }
 
-- (void)accelerometer:(UIAccelerometer *)accelerometer didAccelerate:(UIAcceleration *)acceleration {
-    if(self.startStopButtonIsActive){
-        // Filter out noise
-        float a_x = fabsf(acceleration.x) >= 0.0 ? acceleration.x : 0.0;
-        // Invert accelerometer axes.   
-        a_x = -1.0 * a_x;
-        NSNumber* x = [NSNumber numberWithFloat:a_x];
-        //NSLog(@"%@", x);
-        [self.accelerationPoints addObject:x];
+- (CMMotionManager *)motionManager
+{
+    CMMotionManager *motionManager = nil;
+    
+    id appDelegate = [UIApplication sharedApplication].delegate;
+    
+    if ([appDelegate respondsToSelector:@selector(motionManager)]) {
+        motionManager = [appDelegate motionManager];
     }
+    
+    return motionManager;
 }
+
+- (void)startMotionDetect
+{
+    [self.motionManager
+     startAccelerometerUpdatesToQueue:[[NSOperationQueue alloc] init]
+     withHandler:^(CMAccelerometerData *data, NSError *error)
+     {
+         dispatch_async(dispatch_get_main_queue(), ^{
+             // Filter out noise
+             float a_x = data.acceleration.x;
+             
+             // Invert accelerometer axes.
+             a_x = -1.0 * a_x;
+             NSNumber* x = [NSNumber numberWithFloat:a_x];
+             //NSLog(@"%@", x);
+             [self.accelerationPoints addObject:x];
+         }
+        );
+     }
+     ];
+    
+}
+
+- (void) stopMotionDetect
+{
+    [[self motionManager] stopAccelerometerUpdates];
+}
+
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C748753F1705164C000F4879 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C748753E1705164C000F4879 /* CoreMotion.framework */; };
 		C766F5E916D021890095B94A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C766F5E816D021890095B94A /* UIKit.framework */; };
 		C766F5EB16D021890095B94A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C766F5EA16D021890095B94A /* Foundation.framework */; };
 		C766F5ED16D021890095B94A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C766F5EC16D021890095B94A /* CoreGraphics.framework */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C748753E1705164C000F4879 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		C766F5E516D021890095B94A /* Motion Gesture Authenticator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Motion Gesture Authenticator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C766F5E816D021890095B94A /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C766F5EA16D021890095B94A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -70,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C748753F1705164C000F4879 /* CoreMotion.framework in Frameworks */,
 				C766F5E916D021890095B94A /* UIKit.framework in Frameworks */,
 				C766F5EB16D021890095B94A /* Foundation.framework in Frameworks */,
 				C766F5ED16D021890095B94A /* CoreGraphics.framework in Frameworks */,
@@ -92,6 +95,7 @@
 		C766F5DC16D021880095B94A = {
 			isa = PBXGroup;
 			children = (
+				C748753E1705164C000F4879 /* CoreMotion.framework */,
 				C766F5EE16D021890095B94A /* Motion Gesture Authenticator */,
 				C766F61516D021890095B94A /* Motion Gesture AuthenticatorTests */,
 				C766F5E716D021890095B94A /* Frameworks */,
