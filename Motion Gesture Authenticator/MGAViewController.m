@@ -16,7 +16,10 @@
 
 @implementation MGAViewController
 @synthesize startStopButtonIsActive;
-@synthesize accelerationPoints;
+@synthesize accelerationPointsX;
+@synthesize accelerationPointsY;
+@synthesize accelerationPointsZ;
+
 
 
 
@@ -33,7 +36,10 @@
     [[UIAccelerometer sharedAccelerometer] setUpdateInterval:samplingInterval];
     self.isAuthenticated = NO;
     
-    self.accelerationPoints = [[NSMutableArray alloc] init];
+    self.accelerationPointsY = [[NSMutableArray alloc] init];
+    self.accelerationPointsX = [[NSMutableArray alloc] init];
+    self.accelerationPointsZ = [[NSMutableArray alloc] init];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -45,10 +51,10 @@
 - (IBAction)startAuthentication:(id)sender {
     if(self.startStopButtonIsActive == YES){
         self.startStopButtonIsActive = NO;
-        
-        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPoints:self.accelerationPoints AndSamplingInterval:samplingInterval];
-        isAuthenticated = [sig authenticate];
         [self stopMotionDetect];
+
+        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPointsX:self.accelerationPointsX Y:self.accelerationPointsY AndSamplingInterval:samplingInterval];
+        isAuthenticated = [sig authenticate];
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
             [self.statusLabel setBackgroundColor:[UIColor greenColor]];
@@ -69,7 +75,10 @@
 
         // Delete the recorded points before starting fresh
         // Should appear before setting startStopButtonIsActive to True or we might have race conditions
-        [self.accelerationPoints removeAllObjects];
+        [self.accelerationPointsX removeAllObjects];
+        [self.accelerationPointsY removeAllObjects];
+        [self.accelerationPointsZ removeAllObjects];
+
         self.startStopButtonIsActive = YES;
         isAuthenticated = NO;
         [self.startStopBtn setTitle:@"Stop" forState:UIControlStateNormal];
@@ -98,22 +107,23 @@
 - (void)startMotionDetect
 {
     [self.motionManager
-     startAccelerometerUpdatesToQueue:[[NSOperationQueue alloc] init]
-     withHandler:^(CMAccelerometerData *data, NSError *error)
-     {
-         dispatch_async(dispatch_get_main_queue(), ^{
+     startAccelerometerUpdatesToQueue: [[NSOperationQueue alloc] init]
+     withHandler:^(CMAccelerometerData *accelerometerData, NSError *error) {
              // Filter out noise
-             float a_x = data.acceleration.x;
-             
-             // Invert accelerometer axes.
+             float a_x = accelerometerData.acceleration.x;
+             float a_y = accelerometerData.acceleration.y;
+         
+            // Invert accelerometer axes.
              a_x = -1.0 * a_x;
+             a_y = -1.0 * a_y - 1;
              NSNumber* x = [NSNumber numberWithFloat:a_x];
-             //NSLog(@"%@", x);
-             [self.accelerationPoints addObject:x];
-         }
-        );
+             NSNumber* y = [NSNumber numberWithFloat:a_y];
+
+             //NSLog(@"%@", y);
+             [self.accelerationPointsX addObject:x];
+             [self.accelerationPointsY addObject:y];
      }
-     ];
+    ];
     
 }
 

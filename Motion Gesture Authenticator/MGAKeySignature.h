@@ -9,12 +9,15 @@
 #import <Foundation/Foundation.h>
 
 @interface MGAKeySignature : NSObject {
-    NSArray* accelerationPoints;
+    NSArray* accelerationPointsX;
+    NSArray* accelerationPointsY;
     float samplingInterval;
 }
-@property (nonatomic) NSArray *accelerationPoints;
+@property (nonatomic) NSArray *accelerationPointsX;
+@property (nonatomic) NSArray *accelerationPointsY;
+
 - (BOOL) authenticate;
-- (id) initWithAccelerationPoints: (NSArray*)_accelerationPoints AndSamplingInterval: (float)_samplingInterval;
-- (NSArray*) calculateVelocity;
-- (NSArray*) calculateDisplacement:(NSArray*)velocity;
+- (id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY AndSamplingInterval: (float)_samplingInterval;
+- (NSArray*) calculateVelocity:(NSArray*)accelerationPoints;
+- (NSArray*) calculateDisplacementWithVelocity:(NSArray*)velocity AndAcceleration:(NSArray*) accelerationPoints;
 @end

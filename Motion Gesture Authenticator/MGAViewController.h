@@ -17,7 +17,10 @@
 @property (nonatomic) BOOL startStopButtonIsActive;
 @property (nonatomic, retain) UIAccelerometer *accelerometer;
 @property (weak, nonatomic) IBOutlet UIButton *startStopBtn;
-@property (nonatomic) NSMutableArray *accelerationPoints;
+@property (nonatomic) NSMutableArray *accelerationPointsX;
+@property (nonatomic) NSMutableArray *accelerationPointsY;
+@property (nonatomic) NSMutableArray *accelerationPointsZ;
+
 
 - (IBAction)startAuthentication:(id)sender;
 
