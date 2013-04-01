@@ -150,9 +150,6 @@
         float a_z = acceleration.z;
         
         // Invert accelerometer axes.
-        a_x = -1.0 * a_x;
-        a_y = -1.0 * a_y - 1;
-        a_z = -1.0 * a_z;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         NSNumber* y = [NSNumber numberWithFloat:a_y];
         NSNumber* z = [NSNumber numberWithFloat:a_z];
@@ -169,9 +166,6 @@
         float a_z = acceleration.z;
         
         // Invert accelerometer axes.
-        a_x = -1.0 * a_x;
-        a_y = -1.0 * a_y - 1;
-        a_z = -1.0 * a_z;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         NSNumber* y = [NSNumber numberWithFloat:a_y];
         NSNumber* z = [NSNumber numberWithFloat:a_z];

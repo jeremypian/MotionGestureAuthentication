@@ -67,7 +67,82 @@
     }
     NSLog(@"%@", output);
     */
+    
     BOOL pass = NO;
+    if ([self.recordedMotionX count] < [self.accelerationPointsX count])
+        return pass;
+    
+    float scaling_factor = ([self.recordedMotionX count] - 1) * 1.0 / ([self.accelerationPointsX count] - 1);
+    float bucket_size = 0.05;
+    int numPoints = [self.recordedMotionX count];
+    NSMutableArray *extendedAccelerationPointsX = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    NSMutableArray *extendedAccelerationPointsY = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    NSMutableArray *extendedAccelerationPointsZ = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    NSMutableArray *extendedRecordedMotionX = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    NSMutableArray *extendedRecordedMotionY = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    NSMutableArray *extendedRecordedMotionZ = [[NSMutableArray alloc] initWithCapacity:numPoints];
+    int xMatched = 0;
+    int yMatched = 0;
+    int zMatched = 0;
+    int allMatched = 0;
+
+    for (int i = 0; i<numPoints; i++) {
+        int currentIndex = i/scaling_factor;
+        int x_bucket = [self.accelerationPointsX[currentIndex] floatValue]/bucket_size;
+        int y_bucket = [self.accelerationPointsY[currentIndex] floatValue]/bucket_size;
+        int z_bucket = [self.accelerationPointsZ[currentIndex] floatValue]/bucket_size;
+
+
+        float x_bucket_adjusted = x_bucket * bucket_size;
+        float y_bucket_adjusted = y_bucket * bucket_size;
+        float z_bucket_adjusted = z_bucket * bucket_size;
+
+        
+        [extendedAccelerationPointsX insertObject:[[NSNumber alloc] initWithFloat: x_bucket_adjusted] atIndex:i];
+        [extendedAccelerationPointsY insertObject:[[NSNumber alloc] initWithFloat: y_bucket_adjusted] atIndex:i];
+        [extendedAccelerationPointsZ insertObject:[[NSNumber alloc] initWithFloat: z_bucket_adjusted] atIndex:i];
+        
+        x_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
+        y_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
+        z_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
+        
+        
+        x_bucket_adjusted = x_bucket * bucket_size;
+        y_bucket_adjusted = y_bucket * bucket_size;
+        z_bucket_adjusted = z_bucket * bucket_size;
+        
+        
+        [extendedRecordedMotionX insertObject:[[NSNumber alloc] initWithFloat: x_bucket_adjusted] atIndex:i];
+        [extendedRecordedMotionY insertObject:[[NSNumber alloc] initWithFloat: y_bucket_adjusted] atIndex:i];
+        [extendedRecordedMotionZ insertObject:[[NSNumber alloc] initWithFloat: z_bucket_adjusted] atIndex:i];
+        
+        int incr = 0;
+        if ([[extendedRecordedMotionX objectAtIndex:i] floatValue] == [[extendedAccelerationPointsX objectAtIndex:i] floatValue]) {
+            xMatched++;
+            incr++;
+        }
+        if ([[extendedRecordedMotionY objectAtIndex:i] floatValue] == [[extendedAccelerationPointsY objectAtIndex:i] floatValue]) {
+            yMatched++;
+            incr++;
+        }
+        if ([[extendedRecordedMotionZ objectAtIndex:i] floatValue] == [[extendedAccelerationPointsZ objectAtIndex:i] floatValue]) {
+            zMatched++;
+            incr++;
+        }
+        
+        if (incr == 3) {
+            allMatched++;
+        }
+    }
+    NSLog(@"xMatched %d, not xMatched %d", xMatched, numPoints - xMatched);
+    NSLog(@"yMatched %d, not yMatched %d", yMatched, numPoints - yMatched);
+    NSLog(@"zMatched %d, not zMatched %d", zMatched, numPoints - zMatched);
+    NSLog(@"allMatched %d, not allMatched %d", allMatched, numPoints - allMatched);
+
+
+    
+    
+    /*
     float x_cost = [self dynamicTimeWarp:self.accelerationPointsX AndRecorded:self.recordedMotionX];
     float y_cost = [self dynamicTimeWarp:self.accelerationPointsY AndRecorded:self.recordedMotionY];
     float z_cost = [self dynamicTimeWarp:self.accelerationPointsZ AndRecorded:self.recordedMotionZ];
@@ -76,6 +151,8 @@
     }
     //NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
     //BOOL pass = ([totalDisplacement floatValue] > 0.0);
+     */
+    
     return pass;
 }
 
