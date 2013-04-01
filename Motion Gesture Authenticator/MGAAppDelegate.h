@@ -12,5 +12,6 @@
 @interface MGAAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic, readonly) CMMotionManager *sharedManager;
 
 @end

@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 Jeremy Pian. All rights reserved.
 //
 
+#import "MGAAppDelegate.h"
 #import "MGAViewController.h"
 #import "MGAKeySignature.h"
 #import <CoreMotion/CoreMotion.h>
@@ -25,7 +26,7 @@
 @synthesize accelerationPointsZ;
 @synthesize isAuthenticated;
 @synthesize isRecorded;
-
+@synthesize securitySliderValue;
 
 
 
@@ -41,6 +42,10 @@
     samplingInterval = 0.01;
     self.recordButtonIsActive = NO;
     
+    // Use this for UserAcceleration
+    //[self startUpdates];
+    
+    // Use this for raw acceleration data
     self.accelerometer = [UIAccelerometer sharedAccelerometer];
     self.accelerometer.delegate = self;
     [self.accelerometer setUpdateInterval:samplingInterval];
@@ -54,12 +59,18 @@
     self.recordedMotionX = [[NSMutableArray alloc] init];
     self.recordedMotionY = [[NSMutableArray alloc] init];
     self.recordedMotionZ = [[NSMutableArray alloc] init];
+    securitySliderValue = 0.5*5;
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (IBAction)updateSliderValue:(UISlider *)sender {
+    securitySliderValue = sender.value * 5;
 }
 
 - (IBAction)recordMotion:(id)sender {
@@ -70,6 +81,7 @@
         [self.statusLabel setText:@"RECORDED"];
         [self.statusLabel setBackgroundColor:[UIColor blueColor]];
         NSLog(@"Motion Recorded");
+        //NSLog(@"RECORDED MOTION: %@", self.recordedMotionX);
     }
     else{
 
@@ -83,8 +95,6 @@
         [self.statusLabel setText:@"Recording motion..."];
         [self.statusLabel setBackgroundColor:[UIColor brownColor]];
         [self.recordBtn setTitle:@"Recording..." forState:UIControlStateNormal];
-        //NSLog(@"RECORDED MOTION: %@", self.recordedMotion);
-        
         
         NSLog(@"Started Recording Motion");
     }
@@ -97,8 +107,8 @@
     if(self.startStopButtonIsActive == YES){
         self.startStopButtonIsActive = NO;
 
-        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPointsX:self.accelerationPointsX Y:self.accelerationPointsY AndRecordedMotionX:recordedMotionX AndRecordedMotionY:recordedMotionY AndSamplingInterval:samplingInterval];
-        isAuthenticated = [sig authenticate];
+        MGAKeySignature* sig = [[MGAKeySignature alloc] initWithAccelerationPointsX:self.accelerationPointsX Y:self.accelerationPointsY Z:self.accelerationPointsZ AndRecordedMotionX:self.recordedMotionX AndRecordedMotionY:self.recordedMotionY AndRecordedMotionZ:self.recordedMotionZ AndSamplingInterval:samplingInterval];
+        isAuthenticated = [sig authenticateWithSecurityLevel:self.securitySliderValue];
         if(isAuthenticated){
             [self.statusLabel setText:@"Authenticated"];
             [self.statusLabel setBackgroundColor:[UIColor greenColor]];
@@ -137,33 +147,74 @@
         // Filter out noise
         float a_x = acceleration.x;
         float a_y = acceleration.y;
+        float a_z = acceleration.z;
         
         // Invert accelerometer axes.
         a_x = -1.0 * a_x;
         a_y = -1.0 * a_y - 1;
+        a_z = -1.0 * a_z;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         NSNumber* y = [NSNumber numberWithFloat:a_y];
+        NSNumber* z = [NSNumber numberWithFloat:a_z];
         
         //NSLog(@"%@", y);
         [self.accelerationPointsX addObject:x];
         [self.accelerationPointsY addObject:y];
+        [self.accelerationPointsZ addObject:z];
 
     } else if (self.recordButtonIsActive){
         // Filter out noise
         float a_x = acceleration.x;
         float a_y = acceleration.y;
+        float a_z = acceleration.z;
         
         // Invert accelerometer axes.
         a_x = -1.0 * a_x;
         a_y = -1.0 * a_y - 1;
+        a_z = -1.0 * a_z;
         NSNumber* x = [NSNumber numberWithFloat:a_x];
         NSNumber* y = [NSNumber numberWithFloat:a_y];
+        NSNumber* z = [NSNumber numberWithFloat:a_z];
         
         //NSLog(@"%@", y);
         [self.recordedMotionX addObject:x];
         [self.recordedMotionY addObject:y];
+        [self.recordedMotionZ addObject:z];
     }
 }
 
+- (void)startUpdates
+{
+    NSTimeInterval updateInterval = 0.0125;
+    
+    CMMotionManager *mManager = [(MGAAppDelegate *)[[UIApplication sharedApplication] delegate] sharedManager];
+    
+    if ([mManager isDeviceMotionAvailable] == YES) {
+        // Update interval specified here.
+        [mManager setDeviceMotionUpdateInterval:updateInterval];
+        [mManager startDeviceMotionUpdatesToQueue:[NSOperationQueue mainQueue] withHandler:^(CMDeviceMotion *deviceMotion, NSError *error) {
+            // Implement data storage here.
+            if(self.startStopButtonIsActive){
+                [self.accelerationPointsX addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.x]];
+                [self.accelerationPointsY addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.y]];
+                [self.accelerationPointsZ addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.z]];
+            } else if (self.recordButtonIsActive){
+                [self.recordedMotionX addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.x]];
+                [self.recordedMotionY addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.y]];
+                [self.recordedMotionZ addObject:[NSNumber numberWithFloat:deviceMotion.userAcceleration.z]];
+            }
+        }];
+    }
+}
+
+
+- (void)stopUpdates
+{
+    CMMotionManager *mManager = [(MGAAppDelegate *)[[UIApplication sharedApplication] delegate] sharedManager];
+    
+    if ([mManager isDeviceMotionActive] == YES) {
+        [mManager stopDeviceMotionUpdates];
+    }
+}
 
 @end

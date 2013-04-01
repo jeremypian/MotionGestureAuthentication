@@ -26,10 +26,17 @@
 @property (nonatomic) NSMutableArray *recordedMotionX;
 @property (nonatomic) NSMutableArray *recordedMotionY;
 @property (nonatomic) NSMutableArray *recordedMotionZ;
+@property (weak, nonatomic) IBOutlet UISlider *securitySlider;
+@property (nonatomic) float securitySliderValue;
+- (IBAction)updateSliderValue:(UISlider *)sender;
+
 - (IBAction)recordMotion:(id)sender;
 
-
 - (IBAction)startAuthentication:(id)sender;
+
+- (void)startUpdates;
+
+- (void)stopUpdates;
 
 @end
 /*

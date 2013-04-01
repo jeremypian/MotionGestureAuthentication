@@ -15,11 +15,13 @@
 }
 @property (nonatomic) NSArray *accelerationPointsX;
 @property (nonatomic) NSArray *accelerationPointsY;
+@property (nonatomic) NSArray *accelerationPointsZ;
 @property (nonatomic) NSArray *recordedMotionX;
 @property (nonatomic) NSArray *recordedMotionY;
+@property (nonatomic) NSArray *recordedMotionZ;
 
-- (BOOL) authenticate;
-- (id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY AndRecordedMotionX: (NSArray*)_recoredMotionX AndRecordedMotionY: (NSArray*)_recordedMotionY AndSamplingInterval: (float)_samplingInterval;
+- (BOOL) authenticateWithSecurityLevel:(float)securityLevel;
+- (id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY Z:(NSArray*)_accelerationPointsZ AndRecordedMotionX:(NSArray*)_recordedMotionX AndRecordedMotionY:(NSArray*)_recordedMotionY AndRecordedMotionZ:(NSArray*)_recordedMotionZ AndSamplingInterval: (float)_samplingInterval;
 - (NSArray*) calculateVelocity:(NSArray*)accelerationPoints;
 - (NSArray*) calculateDisplacementWithVelocity:(NSArray*)velocity AndAcceleration:(NSArray*) accelerationPoints;
 @end

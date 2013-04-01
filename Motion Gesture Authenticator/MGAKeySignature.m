@@ -11,19 +11,23 @@
 @implementation MGAKeySignature
 @synthesize accelerationPointsX;
 @synthesize accelerationPointsY;
+@synthesize accelerationPointsZ;
 @synthesize recordedMotionX;
 @synthesize recordedMotionY;
+@synthesize recordedMotionZ;
 
 
--(id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY AndRecordedMotionX: (NSArray*)_recordedMotionX AndRecordedMotionY:(NSArray *)_recordedMotionY AndSamplingInterval: (float)_samplingInterval
+-(id) initWithAccelerationPointsX: (NSArray*)_accelerationPointsX Y:(NSArray*)_accelerationPointsY Z:(NSArray *)_accelerationPointsZ AndRecordedMotionX:(NSArray *)_recordedMotionX AndRecordedMotionY:(NSArray *)_recordedMotionY AndRecordedMotionZ:(NSArray *)_recordedMotionZ AndSamplingInterval:(float)_samplingInterval
 {
     self = [super init];
     if (self) {
         samplingInterval  = _samplingInterval;
         accelerationPointsX = _accelerationPointsX;
         accelerationPointsY = _accelerationPointsY;
+        accelerationPointsZ = _accelerationPointsZ;
         recordedMotionX = _recordedMotionX;
         recordedMotionY = _recordedMotionY;
+        recordedMotionZ = _recordedMotionZ;
     }
     return self;
 }
@@ -31,15 +35,15 @@
 /*
  Current authentication scheme (simple): if phone moves right, then authenticate. Else, deny access.
  */
--(BOOL) authenticate
+-(BOOL) authenticateWithSecurityLevel:(float)securityLevel
 {
-    
+    /*
     NSArray* velocities_x = [self calculateVelocity:self.accelerationPointsX];
     NSArray* displacements_x = [self calculateDisplacementWithVelocity:velocities_x AndAcceleration:self.accelerationPointsX];
     
     NSArray* velocities_y = [self calculateVelocity:self.accelerationPointsY];
     NSArray* displacements_y = [self calculateDisplacementWithVelocity:velocities_y AndAcceleration:self.accelerationPointsY];
-    
+    */
     /*
     NSLog(@"Acceleration");
     NSMutableString *output = [[NSMutableString alloc] init];
@@ -63,9 +67,13 @@
     }
     NSLog(@"%@", output);
     */
-    BOOL pass = YES;
+    BOOL pass = NO;
     float x_cost = [self dynamicTimeWarp:self.accelerationPointsX AndRecorded:self.recordedMotionX];
     float y_cost = [self dynamicTimeWarp:self.accelerationPointsY AndRecorded:self.recordedMotionY];
+    float z_cost = [self dynamicTimeWarp:self.accelerationPointsZ AndRecorded:self.recordedMotionZ];
+    if (x_cost < securityLevel && y_cost < securityLevel && z_cost < securityLevel) {
+        pass = YES;
+    }
     //NSNumber *totalDisplacement = [displacements valueForKeyPath:@"@sum.floatValue"];
     //BOOL pass = ([totalDisplacement floatValue] > 0.0);
     return pass;
