@@ -103,8 +103,8 @@
         [extendedAccelerationPointsZ insertObject:[[NSNumber alloc] initWithFloat: z_bucket_adjusted] atIndex:i];
         
         x_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
-        y_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
-        z_bucket = [self.recordedMotionX[i] floatValue]/bucket_size;
+        y_bucket = [self.recordedMotionY[i] floatValue]/bucket_size;
+        z_bucket = [self.recordedMotionZ[i] floatValue]/bucket_size;
         
         
         x_bucket_adjusted = x_bucket * bucket_size;
